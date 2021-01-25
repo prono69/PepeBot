@@ -18,7 +18,7 @@ async def _(event):
         ". . ."
     )
     if event.reply_to_msg_id:
-        t_a = dict()
+        t_a = {}
         reply = await event.get_reply_message()
         for entity in reply.entities:
             if isinstance(entity, MessageEntityUrl):
@@ -32,8 +32,7 @@ async def _(event):
                 if len(t_a[chat_id]) >= 100:
                     await do_delete_NOQA(event.client, t_a[chat_id], chat_id)
                     t_a[chat_id] = []
-        for chat in t_a:
-            m_di = t_a[chat]
+        for chat, m_di in t_a.items():
             if len(m_di) > 0:
                 await do_delete_NOQA(event.client, m_di, chat)
                 t_a[chat] = []

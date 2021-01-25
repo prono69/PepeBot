@@ -55,7 +55,7 @@ async def _(event):
         display_message = ""
         c_time = time.time()
         while not downloader.isFinished():
-            total_length = downloader.filesize if downloader.filesize else None
+            total_length = downloader.filesize or None
             downloaded = downloader.get_dl_size()
             now = time.time()
             diff = now - c_time

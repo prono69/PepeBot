@@ -18,17 +18,15 @@ async def _(event):
     bot_username = event.pattern_match.group(1)
     search_query = event.pattern_match.group(2)
     try:
-        output_message = ""
         bot_results = await event.client.inline_query(
             bot_username,
             search_query
         )
-        for i, result in enumerate(bot_results):
-            output_message += "{} {} `{}`\n\n".format(
+        output_message = "".join("{} {} `{}`\n\n".format(
                 result.title,
                 result.description,
                 ".icb " + bot_username + " " + str(i + 1) + " " + search_query
-            )
+            ) for i, result in enumerate(bot_results))
         await event.edit(output_message)
     except Exception as e:
         await event.edit("{} did not respond correctly, for **{}**!\n\

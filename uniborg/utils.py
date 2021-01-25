@@ -89,9 +89,11 @@ async def progress(current, total, event, start, type_of_ps):
         time_to_completion = round((total - current) / speed)
         estimated_total_time = elapsed_time + time_to_completion
         progress_str = "[{0}{1}]\nPercent: {2}%\n".format(
-            ''.join(["█" for _ in range(math.floor(percentage / 5))]),
-            ''.join(["░" for _ in range(20 - math.floor(percentage / 5))]),
-            round(percentage, 2))
+            ''.join("█" for _ in range(math.floor(percentage / 5))),
+            ''.join("░" for _ in range(20 - math.floor(percentage / 5))),
+            round(percentage, 2),
+        )
+
         tmp = progress_str + \
             "{0} of {1}\nETA: {2}".format(
                 humanbytes(current),
@@ -138,8 +140,7 @@ def time_formatter(seconds: int) -> str:
         "minutes": 60,
         "seconds": 1
     }
-    for age in r_ange_s:
-        divisor = r_ange_s[age]
+    for age, divisor in r_ange_s.items():
         v_m, remainder = divmod(remainder, divisor)
         v_m = int(v_m)
         if v_m != 0:
@@ -166,15 +167,15 @@ async def is_admin(client, chat_id, user_id):
 
 # Not that Great but it will fix sudo reply
 async def edit_or_reply(event, text):
-    if event.sender_id in Config.SUDO_USERS:
-        await event.delete()
-        reply_to = await event.get_reply_message()
-        if reply_to:
-            return await reply_to.reply(text)
-        else:
-            return await event.reply(text)
-    else:
+    if event.sender_id not in Config.SUDO_USERS:
         return await event.edit(text)
+
+    await event.delete()
+    reply_to = await event.get_reply_message()
+    if reply_to:
+        return await reply_to.reply(text)
+    else:
+        return await event.reply(text)
 
 
 async def run_command(command: List[str]) -> (str, str):
@@ -209,10 +210,9 @@ async def take_screen_shot(video_file, output_directory, ttl):
     t_response, e_response = await run_command(file_genertor_command)
     if os.path.lexists(out_put_file_name):
         return out_put_file_name
-    else:
-        logger.info(e_response)
-        logger.info(t_response)
-        return None
+    logger.info(e_response)
+    logger.info(t_response)
+    return None
 
 # https://github.com/Nekmo/telegram-upload/blob/master/telegram_upload/video.py#L26
 
@@ -237,10 +237,9 @@ async def cult_small_video(video_file, output_directory, start_time, end_time):
     t_response, e_response = await run_command(file_genertor_command)
     if os.path.lexists(out_put_file_name):
         return out_put_file_name
-    else:
-        logger.info(e_response)
-        logger.info(t_response)
-        return None
+    logger.info(e_response)
+    logger.info(t_response)
+    return None
 
 # these two functions are stolen from
 # https://github.com/udf/uniborg/blob/kate/stdplugins/info.py
